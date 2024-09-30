@@ -219,4 +219,20 @@ router.get(
   })
 );
 
+// all reviews --- for admin
+router.get(
+  "/admin-all-reviews",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncError(async (req, res, next) => {
+    try {
+      // Fetch products where reviews array is not empty
+      const productsWithReviews = await Product.find({ reviews: { $ne: [] } }).populate('reviews.user'); // Adjust 'reviews.user' if needed
+      res.json(productsWithReviews);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;

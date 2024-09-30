@@ -1,15 +1,15 @@
 
 
 import React from "react";
-import { FiShoppingBag } from "react-icons/fi";
-import {GrWorkshop} from "react-icons/gr";
-import { RxDashboard } from "react-icons/rx";
-import { CiMoneyBill, CiSettings } from "react-icons/ci";
-import { Link } from "react-router-dom";
-import { HiOutlineUserGroup } from "react-icons/hi";
-import { BsHandbag } from "react-icons/bs";
-import { MdOutlineLocalOffer } from "react-icons/md";
 import { AiOutlineSetting } from "react-icons/ai";
+import { BsHandbag } from "react-icons/bs";
+import { CiMoneyBill } from "react-icons/ci";
+import { FiShoppingBag } from "react-icons/fi";
+import { GrWorkshop } from "react-icons/gr";
+import { HiOutlineUserGroup } from "react-icons/hi";
+import { MdOutlineLocalOffer } from "react-icons/md";
+import { RxDashboard } from "react-icons/rx";
+import { Link } from "react-router-dom";
 
 const AdminSideBar = ({ active }) => {
   return (
@@ -147,6 +147,21 @@ const AdminSideBar = ({ active }) => {
             }`}
           >
             Settings
+          </h5>
+        </Link>
+      </div>
+      <div className="w-full flex items-center p-4">
+        <Link to="/admin-sellers" className="w-full flex items-center">
+          <GrWorkshop
+            size={30}
+            color={`${active === 3 ? "crimson" : "#555"}`}
+          />
+          <h5
+            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
+              active === 3 ? "text-[crimson]" : "text-[#555]"
+            }`}
+          >
+            Product review
           </h5>
         </Link>
       </div>
