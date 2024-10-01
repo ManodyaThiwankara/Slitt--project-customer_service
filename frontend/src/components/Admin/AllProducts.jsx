@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { AiOutlineEye } from "react-icons/ai";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import React, { useEffect, useState } from "react";
+import { AiOutlineEye } from "react-icons/ai";
+import { Link } from "react-router-dom";
 import { server } from "../../server";
 
 const AllProducts = () => {

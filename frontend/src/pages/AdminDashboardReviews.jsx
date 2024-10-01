@@ -10,7 +10,7 @@ const AdminDashboardReviews = () => {
       <div className="w-full flex">
         <div className="flex items-start justify-between w-full">
           <div className="w-[80px] 800px:w-[330px]">
-            <AdminSideBar active={5} /> {/* Adjust the active prop according to your sidebar setup */}
+            <AdminSideBar active={8} /> {/* Adjust the active prop according to your sidebar setup */}
           </div>
           <AllReviews /> {/* This will render the AllReviews component */}
         </div>

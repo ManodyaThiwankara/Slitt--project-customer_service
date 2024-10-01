@@ -131,13 +131,10 @@ const AdminSideBar = ({ active }) => {
           </h5>
         </Link>
       </div>
-
+            {/* review */}
       <div className="w-full flex items-center p-4">
-        <Link
-          to="/profile"
-          className="w-full flex items-center"
-        >
-          <AiOutlineSetting
+        <Link to="/admin-reviews" className="w-full flex items-center">
+          <GrWorkshop
             size={30}
             color={`${active === 8 ? "crimson" : "#555"}`}
           />
@@ -146,22 +143,26 @@ const AdminSideBar = ({ active }) => {
               active === 8 ? "text-[crimson]" : "text-[#555]"
             }`}
           >
-            Settings
+            Product review
           </h5>
         </Link>
       </div>
+
       <div className="w-full flex items-center p-4">
-        <Link to="/admin-sellers" className="w-full flex items-center">
-          <GrWorkshop
+        <Link
+          to="/profile"
+          className="w-full flex items-center"
+        >
+          <AiOutlineSetting
             size={30}
-            color={`${active === 3 ? "crimson" : "#555"}`}
+            color={`${active === 9 ? "crimson" : "#555"}`}
           />
           <h5
             className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 3 ? "text-[crimson]" : "text-[#555]"
+              active === 9 ? "text-[crimson]" : "text-[#555]"
             }`}
           >
-            Product review
+            Settings
           </h5>
         </Link>
       </div>

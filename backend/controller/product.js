@@ -219,20 +219,35 @@ router.get(
   })
 );
 
-// all reviews --- for admin
+// Controller to fetch all reviews for admin
 router.get(
   "/admin-all-reviews",
   isAuthenticated,
   isAdmin("Admin"),
   catchAsyncError(async (req, res, next) => {
     try {
-      // Fetch products where reviews array is not empty
-      const productsWithReviews = await Product.find({ reviews: { $ne: [] } }).populate('reviews.user'); // Adjust 'reviews.user' if needed
-      res.json(productsWithReviews);
+      // Assuming reviews are embedded within the Product model
+      const products = await Product.find().sort({ createdAt: -1 });
+      
+      // If you want only the reviews
+      const reviews = products.map(product => ({
+        productId: product._id,
+        productName: product.name,
+        reviews: product.reviews, // Make sure your Product model has a 'reviews' field
+      }));
+
+      console.log('Reviews:', reviews); // Check what is returned
+      res.status(200).json({
+        success: true,
+        reviews,
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
+
+
+
 
 module.exports = router;
