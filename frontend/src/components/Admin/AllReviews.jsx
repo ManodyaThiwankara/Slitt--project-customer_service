@@ -30,7 +30,7 @@ const AllReviews = () => {
     try {
       console.log("Review ID to delete:", reviewId); // Log the reviewId to confirm
       const response = await axios.delete(
-        `${server}/product/admin-delete-review/${reviewId}`,
+        `${server}/product/admin-delete-review`,
         { withCredentials: true }
       );
       console.log("API response:", response.data); // Log the response data

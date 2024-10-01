@@ -249,25 +249,30 @@ router.get(
 
 // Controller to delete a review
 router.delete(
-  "/admin-delete-review/:id",
-  isAuthenticated,
-  isAdmin("Admin"),
-  catchAsyncError(async (req, res, next) => {
-    const { id } = req.params;
-    console.log('dfdsfdsf',id);
-    // Assuming you have a Review model
-    const review = await Review.findByIdAndDelete(id);
+  "/admin-delete-review",
+  async (req, res, next) => {
+    try {
+     // const { id } = req.params;
+      console.log('Review ID:');
+      
+      // Assuming you have a Review model
+      const review = await Review.findByIdAndDelete(id);
 
-    if (!review) {
-      return next(new ErrorHandler("Review not found", 404));
+      if (!review) {
+        return res.status(404).json({ message: "Review not found" });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Review deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      res.status(500).json({ message: "Server error" });
     }
-
-    res.status(200).json({
-      success: true,
-      message: "Review deleted successfully",
-    });
-  })
+  }
 );
+
 
 
 

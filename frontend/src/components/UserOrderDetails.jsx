@@ -1,20 +1,23 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import { BsFillBagFill } from "react-icons/bs";
-import { Link, useParams } from "react-router-dom";
+import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
-import styles from "../styles/styles";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { getAllOrdersOfUser } from "../redux/actions/order";
 import { backend_url, server } from "../server";
-import { RxCross1 } from "react-icons/rx";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import axios from "axios";
-import { toast } from "react-toastify";
+import styles from "../styles/styles";
 
 const UserOrderDetails = () => {
   const { orders } = useSelector((state) => state.order);
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+
+const [isTrueReview, setIsTrueReview] = useState(false);
+const [errorMessage, setErrorMessage] = useState("");
   const [comment, setComment] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [rating, setRating] = useState(1);
@@ -28,6 +31,10 @@ const UserOrderDetails = () => {
   const data = orders && orders.find((item) => item._id === id);
 
   const reviewHandler = async (e) => {
+    if (!isTrueReview) {
+      setErrorMessage("Please confirm that this is a true review.");
+      return; // Exit if the checkbox is not checked
+    }
     await axios
       .put(
         `${server}/product/create-new-review`,
@@ -181,16 +188,28 @@ const UserOrderDetails = () => {
                 id=""
                 cols="20"
                 rows="5"
+                
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="How was your product? write your expresion about it!"
                 className="mt-2 w-[95%] border p-2 outline-none"
               ></textarea>
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            </div>
+            <div className="ml-3">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isTrueReview}
+                  onChange={(e) => setIsTrueReview(e.target.checked)}
+                />
+                This is a true review
+              </label>
             </div>
             <div
               className={`${styles.button} text-white text-[20px] ml-3`}
               onClick={rating > 1 ? reviewHandler : null}
-            >
+              >
               Submit
             </div>
           </div>
