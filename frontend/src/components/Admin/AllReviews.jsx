@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import jsPDF from "jspdf";
@@ -9,6 +9,8 @@ import { server } from "../../server";
 
 const AllReviews = () => {
   const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [filteredData, setFilteredData] = useState([]); // State for filtered data
 
   // Fetch review data on component mount
   useEffect(() => {
@@ -16,6 +18,7 @@ const AllReviews = () => {
       .get(`${server}/product/admin-all-products`, { withCredentials: true })
       .then((res) => {
         setData(res.data.products);
+        setFilteredData(res.data.products); // Initialize filtered data
         console.log(res.data.products);
       })
       .catch((error) => {
@@ -25,18 +28,37 @@ const AllReviews = () => {
 
   const handleDelete = async (reviewId) => {
     try {
-        console.log('Review ID to delete:', reviewId); // Log the reviewId to confirm
-        const response = await axios.delete(`${server}/product/admin-delete-review/${reviewId}`, { withCredentials: true });
-        console.log("API response:", response.data); // Log the response data
-        // Rest of your delete logic...
+      console.log("Review ID to delete:", reviewId); // Log the reviewId to confirm
+      const response = await axios.delete(
+        `${server}/product/admin-delete-review/${reviewId}`,
+        { withCredentials: true }
+      );
+      console.log("API response:", response.data); // Log the response data
+      // Rest of your delete logic...
     } catch (error) {
-        console.error("Error deleting review:", error);
+      console.error("Error deleting review:", error);
     }
-};
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    // Filter data based on product name or shop name
+    const filtered = data.filter((item) => {
+      const productName = item.name.toLowerCase();
+      const shopName = item.shop.name.toLowerCase();
+      return (
+        productName.includes(query) || shopName.includes(query)
+      );
+    });
+    setFilteredData(filtered);
+  };
 
   // Prepare row data for the DataGrid
   const rows = [];
-  data.forEach((item) => {
+  filteredData.forEach((item) => {
     // Push main product row
     rows.push({
       id: item._id,
@@ -90,44 +112,46 @@ const AllReviews = () => {
   ];
 
   // PDF generation function
-const generatePDF = () => {
+  const generatePDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text("All Reviews Report (products have user reviews)", 14, 16); // Title of the report
     doc.setFontSize(12);
-  
+
     const tableColumn = ["Product Name", "Shop Name", "Rating"]; // Adjusted columns
     const tableRows = [];
-  
+
     // Populate the table rows with relevant data
     data.forEach((item) => {
       const shopName = item.shop?.name || "Unknown Shop"; // Ensure shop name is defined
-      const averageRating = item.ratings ? (item.ratings).toFixed(2) : "0"; // Average rating, formatted to 2 decimal places
-  
+      const averageRating = item.ratings ? item.ratings.toFixed(2) : "0"; // Average rating, formatted to 2 decimal places
+
       // Only include product name, shop name, and rating in the rows
-      const reviewData = [
-        item.name, // Product Name
-        shopName,  // Shop Name
-        averageRating, // Average Rating
-      ];
-  
+      const reviewData = [item.name, shopName, averageRating];
       tableRows.push(reviewData);
     });
-  
+
     // Create the table in the PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 22, // Start position on the Y-axis
     });
-  
+
     // Save the PDF locally
     doc.save("all_reviews_report.pdf");
   };
-  
 
   return (
     <div className="w-full mx-8 pt-1 mt-10 bg-white">
+      <TextField
+        label="Search by Product or Shop Name"
+        variant="outlined"
+        value={searchQuery}
+        onChange={handleSearchChange}
+        fullWidth
+        margin="normal"
+      />
       <DataGrid
         rows={rows}
         columns={columns}
