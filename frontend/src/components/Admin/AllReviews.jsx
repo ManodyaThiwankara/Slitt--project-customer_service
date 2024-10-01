@@ -23,22 +23,16 @@ const AllReviews = () => {
       });
   }, []);
 
-  // Function to delete a review
   const handleDelete = async (reviewId) => {
     try {
-      await axios.delete(`${server}/product/review/${reviewId}`, { withCredentials: true });
-      // Remove the deleted review from state
-      setData((prevData) =>
-        prevData.map((item) => ({
-          ...item,
-          reviews: item.reviews.filter((review) => review._id !== reviewId),
-        }))
-      );
-      console.log("Review deleted successfully.");
+        console.log('Review ID to delete:', reviewId); // Log the reviewId to confirm
+        const response = await axios.delete(`${server}/product/admin-delete-review/${reviewId}`, { withCredentials: true });
+        console.log("API response:", response.data); // Log the response data
+        // Rest of your delete logic...
     } catch (error) {
-      console.error("Error deleting review:", error);
+        console.error("Error deleting review:", error);
     }
-  };
+};
 
   // Prepare row data for the DataGrid
   const rows = [];
@@ -96,34 +90,41 @@ const AllReviews = () => {
   ];
 
   // PDF generation function
-  const generatePDF = () => {
+const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text("All Reviews Report", 14, 16);
-
-    const tableColumn = ["Review Id", "Product Name", "User Name", "Rating", "Comment"];
+    doc.setFontSize(16);
+    doc.text("All Reviews Report (products have user reviews)", 14, 16); // Title of the report
+    doc.setFontSize(12);
+  
+    const tableColumn = ["Product Name", "Shop Name", "Rating"]; // Adjusted columns
     const tableRows = [];
-
+  
+    // Populate the table rows with relevant data
     data.forEach((item) => {
-      item.reviews.forEach((review) => {
-        const reviewData = [
-          review._id,
-          item.name,
-          review.user.name || "Anonymous", // Display user's name
-          review.rating,
-          review.comment,
-        ];
-        tableRows.push(reviewData);
-      });
+      const shopName = item.shop?.name || "Unknown Shop"; // Ensure shop name is defined
+      const averageRating = item.ratings ? (item.ratings).toFixed(2) : "0"; // Average rating, formatted to 2 decimal places
+  
+      // Only include product name, shop name, and rating in the rows
+      const reviewData = [
+        item.name, // Product Name
+        shopName,  // Shop Name
+        averageRating, // Average Rating
+      ];
+  
+      tableRows.push(reviewData);
     });
-
+  
+    // Create the table in the PDF
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 22,
+      startY: 22, // Start position on the Y-axis
     });
-
+  
+    // Save the PDF locally
     doc.save("all_reviews_report.pdf");
   };
+  
 
   return (
     <div className="w-full mx-8 pt-1 mt-10 bg-white">
